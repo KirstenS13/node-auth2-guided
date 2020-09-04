@@ -1,0 +1,69 @@
+USING JSON WEB TOKENS - 9/3/20 - LECTURE
+
+HASHING = turning any data into a fixed length string
+    -- one way & irreversible
+
+    -- useful for password storage and verifying integrity of a piece of data
+        -- if the hash of original and hash of file match, the file hasn't changed
+        -- the hash is called a checksum when it's used for verifying files
+        -- only have to hash files once for checksums
+
+JSON Web Token (JWT) 
+    -- a cryptographically-secure way for two parties to exchange JSON data without any shared state
+    -- uses checksums to make sure data was not tampered with
+    -- does this with a signature
+        -- hash of header and payload with secret string
+
+JWT looks like this:
+    <header data>.<payload data>.<hash/signature>
+
+    base64({...}).base64({...}).hash(header + payload + secret)
+
+    string.string.string
+
+If you change the data in a JWT you must resign it with your secret string
+    -- hackers can't change your JWT because they don't know the secret string
+    -- therefore, even if they change the JWT, it will be invalid because their secret string is not the original secret string
+    -- if they found the secret string, they could change JWTs and the JWTs would be valid because the hacker had the secret string
+
+Never include your secret string in your git history, ever
+
+JWTs can be used instead of sessions for authentication
+
+Sessions - need to look up data to verify that the session is valid
+
+JWT - don't need anything saved to memory or db, so there is nothing to look up
+    -- if signature is valid, JWT is trustworthy
+    -- no need for db lookups
+
+BUT - with JWTs, you can't properly log someone out
+    -- there's no session to delete
+
+JWTs aren't always the best for user authentication
+    -- great for server-server communication and data sharing btwn 2 parties
+
+Sessions are better for user authentication
+
+JWTs can be used with sessions
+
+JWTs are good for verifying data though
+
+JWT payloads are very easily decoded
+    -- Only use them for info that identifies the user/ authorization purposes
+    -- NEVER store sensitive data in the payload
+
+The secret string is what makes JWTs secure
+
+Start using it: 
+    install jsonwebtoken npm module
+
+We need dotenv installed so we can use environment variables
+    -- to keep our secret string secret
+
+    -- env. var.s are all uppercase with _ instead of -
+
+We can't log someone out with JWTs
+BUT in an absolute emergency, we can log EVERYONE out
+    -- just change the secret string
+    -- all previously created tokens will be invalidated
+    -- everyone will be logged out automatically, because their tokens are invalid now
